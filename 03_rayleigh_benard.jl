@@ -7,14 +7,21 @@
 import Pkg; Pkg.activate(@__DIR__)
 using Oceananigans
 
-# CPU by default; set OCEAN_ARCH=GPU (done by the Casper PBS script) to run on a GPU.
-# On Oceananigans >= 0.109 the zero-arg GPU() lives in the CUDA extension, so load CUDA first.
+# Architecture: use the GPU only if OCEAN_ARCH=GPU AND a CUDA GPU is actually usable here;
+# otherwise fall back to the CPU (these models are tiny, so CPU is perfectly fine). On
+# Oceananigans >= 0.109 the zero-arg GPU() lives in the CUDA extension, so load CUDA first.
 if get(ENV, "OCEAN_ARCH", "CPU") == "GPU"
     using CUDA
-    arch = GPU()
+    if CUDA.functional()
+        arch = GPU()
+    else
+        @warn "OCEAN_ARCH=GPU but no usable CUDA GPU on this node — falling back to CPU."
+        arch = CPU()
+    end
 else
     arch = CPU()
 end
+@info "Architecture: $arch"
 using Oceananigans.Units
 using CairoMakie
 using Printf

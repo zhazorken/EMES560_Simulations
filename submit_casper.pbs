@@ -27,6 +27,7 @@ export OCEAN_ARCH=GPU
 cd "${PBS_O_WORKDIR:-$(dirname "$0")}"
 mkdir -p logs output
 echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES ; Julia: $($JULIA --version 2>/dev/null)"
+nvidia-smi -L 2>/dev/null || echo "  (no nvidia-smi / no GPU visible on this node)"
 
 scripts=(01_tracer_stirring.jl 02_kelvin_helmholtz.jl 03_rayleigh_benard.jl \
          04_two_dimensional_turbulence.jl 05_inertial_oscillation.jl \
