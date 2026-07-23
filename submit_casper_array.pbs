@@ -1,0 +1,31 @@
+#!/bin/bash -l
+#PBS -A UGIT0046
+#PBS -N emes560_sim
+#PBS -o logs/
+#PBS -e logs/
+#PBS -l walltime=01:00:00
+#PBS -q casper
+#PBS -l select=1:ncpus=4:ngpus=1:gpu_type=a100
+#PBS -M kenzhao@unc.edu
+#PBS -m ae
+#PBS -r n
+#PBS -J 1-11
+
+# ONE model per sub-job, each capped at 1 GPU-hour of walltime (they finish in minutes).
+#   qsub submit_casper_array.pbs
+# NOTE: each sub-job pays the CUDA compile cost (~2-4 min) separately, so submit_casper.pbs
+# (all in a single job) is cheaper overall. Use this only if you want per-model isolation.
+export JULIA_DEPOT_PATH="${JULIA_DEPOT_PATH:-/glade/work/$USER/.julia}"
+JULIA="${JULIA:-julia}"
+export OCEAN_ARCH=GPU
+cd "${PBS_O_WORKDIR:-$(dirname "$0")}"
+mkdir -p logs output
+
+scripts=(01_tracer_stirring.jl 02_kelvin_helmholtz.jl 03_rayleigh_benard.jl \
+         04_two_dimensional_turbulence.jl 05_inertial_oscillation.jl \
+         06_geostrophic_adjustment.jl 07_internal_wave.jl \
+         08_barotropic_instability_bickley.jl 09_ekman_spiral.jl \
+         10_baroclinic_instability.jl 11_rossby_wave.jl)
+s=${scripts[$((PBS_ARRAY_INDEX - 1))]}
+echo "==================== sub-job $PBS_ARRAY_INDEX : $s ===================="
+time $JULIA --project --pkgimages=no "$s" 2>&1 | tee "logs/${s%.jl}.out"

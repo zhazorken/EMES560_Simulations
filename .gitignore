@@ -1,0 +1,16 @@
+# resolved per machine (laptop vs Casper) — see setup.jl / setup_casper.sh
+Manifest.toml
+# simulation outputs — regenerate by running the scripts
+output/*.mp4
+output/*.png
+output/*.gif
+output/*.jld2
+output/*.nc
+# PBS logs
+logs/*.log
+logs/*.out
+logs/*.o[0-9]*
+logs/*.e[0-9]*
+# misc
+.DS_Store
+*.jl.cov

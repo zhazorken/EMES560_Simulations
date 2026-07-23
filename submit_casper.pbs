@@ -1,0 +1,43 @@
+#!/bin/bash -l
+#PBS -A UGIT0046
+#PBS -N emes560_sims
+#PBS -o logs/emes560_sims.log
+#PBS -e logs/emes560_sims.log
+#PBS -l walltime=01:30:00
+#PBS -q casper
+#PBS -l select=1:ncpus=4:ngpus=1:gpu_type=a100
+#PBS -M kenzhao@unc.edu
+#PBS -m ae
+#PBS -r n
+
+# Run ALL 11 EMES 560 teaching simulations on ONE A100, sequentially, on the GPU.
+# They are tiny, so the whole suite finishes in well under an hour of GPU time — and a
+# single Julia session compiles the CUDA kernels ONCE and reuses them for all 11 models
+# (far cheaper than one job per model). Outputs (mp4 + png) land in ./output.
+#
+# First:  ./setup_casper.sh          # once, on a login node
+# Then:   qsub submit_casper.pbs
+#         qsub -v JULIA=$HOME/.juliaup/bin/julia submit_casper.pbs
+#         qsub -v ONLY=08 submit_casper.pbs        # just model 08
+#
+# CUDA.jl bundles its own toolkit and uses the node driver — NO `module load cuda` needed.
+export JULIA_DEPOT_PATH="${JULIA_DEPOT_PATH:-/glade/work/$USER/.julia}"
+JULIA="${JULIA:-julia}"
+export OCEAN_ARCH=GPU
+cd "${PBS_O_WORKDIR:-$(dirname "$0")}"
+mkdir -p logs output
+echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES ; Julia: $($JULIA --version 2>/dev/null)"
+
+scripts=(01_tracer_stirring.jl 02_kelvin_helmholtz.jl 03_rayleigh_benard.jl \
+         04_two_dimensional_turbulence.jl 05_inertial_oscillation.jl \
+         06_geostrophic_adjustment.jl 07_internal_wave.jl \
+         08_barotropic_instability_bickley.jl 09_ekman_spiral.jl \
+         10_baroclinic_instability.jl 11_rossby_wave.jl)
+
+for s in "${scripts[@]}"; do
+    [ -n "$ONLY" ] && [[ "$s" != ${ONLY}_* ]] && continue
+    echo "==================== $s ===================="
+    time $JULIA --project --pkgimages=no "$s" 2>&1 | tee "logs/${s%.jl}.out"
+done
+
+qstat -f "$PBS_JOBID" >> logs/emes560_sims.log
