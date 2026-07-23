@@ -10,7 +10,13 @@ import Pkg; Pkg.activate(@__DIR__)
 using Oceananigans
 
 # CPU by default; set OCEAN_ARCH=GPU (done by the Casper PBS script) to run on a GPU.
-arch = get(ENV, "OCEAN_ARCH", "CPU") == "GPU" ? GPU() : CPU()
+# On Oceananigans >= 0.109 the zero-arg GPU() lives in the CUDA extension, so load CUDA first.
+if get(ENV, "OCEAN_ARCH", "CPU") == "GPU"
+    using CUDA
+    arch = GPU()
+else
+    arch = CPU()
+end
 using CairoMakie
 using Printf
 
