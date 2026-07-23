@@ -2,30 +2,32 @@
 #PBS -A UGIT0046
 #PBS -N emes560_sims
 #PBS -o logs/emes560_sims.log
-#PBS -e logs/emes560_sims.log
+#PBS -j oe
 #PBS -l walltime=01:30:00
 #PBS -q casper
-#PBS -l select=1:ncpus=4:ngpus=1:gpu_type=a100
+#PBS -l select=1:ncpus=4:mem=20gb:ngpus=1:gpu_type=a100
 #PBS -M kenzhao@unc.edu
 #PBS -m ae
 #PBS -r n
 
-# Run ALL 11 EMES 560 teaching simulations on ONE A100, sequentially, on the GPU.
-# They are tiny, so the whole suite finishes in well under an hour of GPU time — and a
-# single Julia session compiles the CUDA kernels ONCE and reuses them for all 11 models
-# (far cheaper than one job per model). Outputs (mp4 + png) land in ./output.
+# Run ALL 11 EMES 560 teaching sims on ONE A100 in a single job — CUDA kernels compile once and
+# are reused across all models, so the whole suite finishes in well under 1 GPU-hour. Outputs
+# (mp4 + png) land in ./output.  Header/conventions mirror your working Ovall26/sarqardleq_cg run.
 #
-# First:  ./setup_casper.sh          # once, on a login node
-# Then:   qsub submit_casper.pbs
-#         qsub -v JULIA=$HOME/.juliaup/bin/julia submit_casper.pbs
-#         qsub -v ONLY=08 submit_casper.pbs        # just model 08
+# First (once, on a login node):   JULIA=$HOME/.juliaup/bin/julia ./setup_casper.sh
+# Then:                            qsub submit_casper.pbs
+#                                  qsub -v ONLY=05 submit_casper.pbs         # just one model
+#                                  qsub -v JULIA=/path/to/julia submit_casper.pbs
 #
-# CUDA.jl bundles its own toolkit and uses the node driver — NO `module load cuda` needed.
-export JULIA_DEPOT_PATH="${JULIA_DEPOT_PATH:-/glade/work/$USER/.julia}"
-JULIA="${JULIA:-julia}"
-export OCEAN_ARCH=GPU
-cd "${PBS_O_WORKDIR:-$(dirname "$0")}"
+# PBS starts the job in $HOME, so cd to the submission dir (where the .jl / Project.toml / logs
+# live). DEFAULT ~/.julia depot => reuses the same Oceananigans+CUDA stack your saqqar runs use.
+# No `module load cuda`: CUDA.jl uses the node driver. (If it ever can't find the driver,
+# `module load cuda` — check `module avail cuda` — but do NOT force-purge / pin ncarenv.)
+cd "$PBS_O_WORKDIR" || exit 1
 mkdir -p logs output
+
+JULIA="${JULIA:-$HOME/.juliaup/bin/julia}"
+export OCEAN_ARCH=GPU
 echo "CUDA_VISIBLE_DEVICES=$CUDA_VISIBLE_DEVICES ; Julia: $($JULIA --version 2>/dev/null)"
 nvidia-smi -L 2>/dev/null || echo "  (no nvidia-smi / no GPU visible on this node)"
 
@@ -41,4 +43,4 @@ for s in "${scripts[@]}"; do
     time $JULIA --project --pkgimages=no "$s" 2>&1 | tee "logs/${s%.jl}.out"
 done
 
-qstat -f "$PBS_JOBID" >> logs/emes560_sims.log
+qstat -f $PBS_JOBID >> logs/emes560_sims.log

@@ -3,6 +3,7 @@
 #PBS -N emes560_sim
 #PBS -o logs/
 #PBS -e logs/
+#PBS -j oe
 #PBS -l walltime=01:00:00
 #PBS -q casper
 #PBS -l select=1:ncpus=4:ngpus=1:gpu_type=a100
@@ -15,8 +16,7 @@
 #   qsub submit_casper_array.pbs
 # NOTE: each sub-job pays the CUDA compile cost (~2-4 min) separately, so submit_casper.pbs
 # (all in a single job) is cheaper overall. Use this only if you want per-model isolation.
-export JULIA_DEPOT_PATH="${JULIA_DEPOT_PATH:-/glade/work/$USER/.julia}"
-JULIA="${JULIA:-julia}"
+JULIA="${JULIA:-$HOME/.juliaup/bin/julia}"
 export OCEAN_ARCH=GPU
 cd "${PBS_O_WORKDIR:-$(dirname "$0")}"
 mkdir -p logs output

@@ -87,18 +87,21 @@ gh repo create EMES560_Simulations --public --source=. --push
 
 ## Running on Casper (NCAR)
 
-Conventions match your `IceShelfCavity` setup: account `UGIT0046`, `casper` queue, one A100, `juliaup`, Julia depot on `/glade/work`, no `module load cuda` (CUDA.jl bundles its own toolkit).
+Conventions match your working `Ovall26/sarqardleq_cg` run: account `UGIT0046`, `casper` queue, one A100, `juliaup`, the **default `~/.julia` depot** (so it reuses the same Oceananigans 0.109 + CUDA stack your saqqar runs use — which is known to see the A100), no `module load cuda`.
 
 ```bash
-# on a Casper login node — keep code + depot on /glade/work
+# on a Casper login node — code on /glade/work, packages in the default ~/.julia depot
 cd /glade/work/$USER
-git clone git@github.com:<you>/EMES560_Simulations.git
+git clone https://github.com/zhazorken/EMES560_Simulations.git
 cd EMES560_Simulations
 
+unset JULIA_DEPOT_PATH                               # IMPORTANT: use the default ~/.julia
 JULIA=$HOME/.juliaup/bin/julia ./setup_casper.sh    # instantiate + precompile (once)
 
 qsub submit_casper.pbs                              # ALL 11 models, one A100, one job
 ```
+
+> If a previous session `export`ed `JULIA_DEPOT_PATH=/glade/work/$USER/.julia`, that separate depot gets a *fresh* CUDA install that may not detect the GPU. `unset JULIA_DEPOT_PATH` (above) makes both setup and the job use `~/.julia`, reusing your proven stack.
 
 **Cost.** The models are tiny, so `submit_casper.pbs` runs the whole suite in a single Julia
 session (CUDA kernels compile once, then all 11 run in seconds each) — well under **1 GPU-hour
