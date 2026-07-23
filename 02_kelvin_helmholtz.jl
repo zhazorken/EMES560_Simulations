@@ -32,7 +32,7 @@ Lx, Lz = 14.0, 10.0
 grid = RectilinearGrid(arch; size = (Nx, Nz), x = (0, Lx), z = (-Lz/2, Lz/2),
                        topology = (Periodic, Flat, Bounded))
 
-model = NonhydrostaticModel(; grid,
+model = NonhydrostaticModel(grid;
                             advection = WENO(),
                             timestepper = :RungeKutta3,
                             tracers = :b,

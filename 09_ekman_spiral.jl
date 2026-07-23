@@ -37,7 +37,7 @@ Aᵥ = 1e-2                             # vertical eddy viscosity  → δ_E = �
 # eastward wind stress = a downward flux of eastward momentum: Qᵘ = −τx/ρ₀
 u_bcs = FieldBoundaryConditions(top = FluxBoundaryCondition(-τx / ρ₀))
 
-model = NonhydrostaticModel(; grid, coriolis = FPlane(f = f),
+model = NonhydrostaticModel(grid; coriolis = FPlane(f = f),
                             closure = ScalarDiffusivity(ν = Aᵥ),
                             buoyancy = nothing, tracers = (),
                             boundary_conditions = (; u = u_bcs))

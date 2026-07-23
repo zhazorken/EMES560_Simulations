@@ -38,7 +38,7 @@ grid = RectilinearGrid(arch; size = (Nx, Ny, Nz),
 f  = 1e-4
 N² = 1e-5                    # stratification  → N = 3.2e-3, L_d = NH/f ≈ 32 km
 Δb = 5e-3                    # buoyancy jump across the front
-model = HydrostaticFreeSurfaceModel(; grid,
+model = HydrostaticFreeSurfaceModel(grid;
                                     coriolis = FPlane(f = f),
                                     buoyancy = BuoyancyTracer(), tracers = :b,
                                     momentum_advection = WENO(),

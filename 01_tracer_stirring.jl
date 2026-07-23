@@ -34,7 +34,7 @@ grid = RectilinearGrid(arch; size = (Nx, Ny), x = (0, L), y = (0, L),
                        topology = (Periodic, Periodic, Flat))
 
 # a little viscosity/diffusivity keeps the run numerically clean
-model = NonhydrostaticModel(; grid,
+model = NonhydrostaticModel(grid;
                             advection = WENO(),
                             timestepper = :RungeKutta3,
                             tracers = :c,

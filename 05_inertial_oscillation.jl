@@ -33,7 +33,7 @@ grid = RectilinearGrid(arch; size = (4, 4, 4), extent = (1, 1, 1),
                        topology = (Periodic, Periodic, Bounded))
 
 f = 1e-4                                   # Coriolis parameter (mid-latitude)
-model = NonhydrostaticModel(; grid, coriolis = FPlane(f = f),
+model = NonhydrostaticModel(grid; coriolis = FPlane(f = f),
                             buoyancy = nothing, tracers = ())
 
 set!(model, u = 0.1)                        # give it an initial eastward kick

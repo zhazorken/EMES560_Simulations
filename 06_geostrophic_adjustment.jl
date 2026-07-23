@@ -32,7 +32,7 @@ Lx = 40.0
 grid = RectilinearGrid(arch; size = Nx, x = (-Lx/2, Lx/2), topology = (Bounded, Flat, Flat))
 
 g, H, f = 1.0, 1.0, 1.0
-model = ShallowWaterModel(; grid, coriolis = FPlane(f = f),
+model = ShallowWaterModel(grid; coriolis = FPlane(f = f),
                           gravitational_acceleration = g)
 
 # initial condition: a Gaussian height bump of width ≈ L_d, fluid at rest

@@ -43,7 +43,7 @@ B̄(x, z, t) = N² * z
 A, σ = 1e-3, 0.2
 w_force(x, z, t) = A * exp(-(x^2 + z^2) / 2σ^2) * sin(ω * t)
 
-model = NonhydrostaticModel(; grid,
+model = NonhydrostaticModel(grid;
                             advection = WENO(),
                             timestepper = :RungeKutta3,
                             tracers = :b,

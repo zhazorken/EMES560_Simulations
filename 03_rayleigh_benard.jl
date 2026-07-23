@@ -36,7 +36,7 @@ Qᵇ = 1e-7               # surface buoyancy flux  [m² s⁻³]
 N² = 1e-5               # initial stratification [s⁻²]
 b_bcs = FieldBoundaryConditions(top = FluxBoundaryCondition(Qᵇ))
 
-model = NonhydrostaticModel(; grid,
+model = NonhydrostaticModel(grid;
                             advection = WENO(),
                             timestepper = :RungeKutta3,
                             tracers = :b,

@@ -32,7 +32,7 @@ L = 2π
 grid = RectilinearGrid(arch; size = (Nx, Ny), x = (0, L), y = (0, L),
                        topology = (Periodic, Periodic, Flat))
 
-model = NonhydrostaticModel(; grid,
+model = NonhydrostaticModel(grid;
                             timestepper = :RungeKutta3,
                             advection = WENO(),
                             closure = ScalarDiffusivity(ν = 1e-4))

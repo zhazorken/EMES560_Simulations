@@ -33,7 +33,7 @@ grid = RectilinearGrid(arch; size = (Nx, Ny), x = (0, Lx), y = (-Ly/2, Ly/2),
                        topology = (Periodic, Bounded, Flat))
 
 g, H, f, U = 1.0, 1.0, 1.0, 0.5
-model = ShallowWaterModel(; grid, coriolis = FPlane(f = f),
+model = ShallowWaterModel(grid; coriolis = FPlane(f = f),
                           gravitational_acceleration = g,
                           momentum_advection = WENO())
 
