@@ -43,8 +43,8 @@ simulation = Simulation(model, Δt = T/200, stop_time = 2.2T)
 
 track = Tuple{Float64, Float64, Float64}[]  # (t, ū, v̄)
 grab(sim) = push!(track, (sim.model.clock.time,
-                          mean(interior(sim.model.velocities.u)),
-                          mean(interior(sim.model.velocities.v))))
+                          mean(Array(interior(sim.model.velocities.u))),
+                          mean(Array(interior(sim.model.velocities.v)))))
 simulation.callbacks[:grab] = Callback(grab, IterationInterval(1))
 
 @info "Running inertial-oscillation simulation..."
