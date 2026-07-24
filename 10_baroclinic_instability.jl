@@ -88,7 +88,7 @@ Colorbar(fig[1, 2], hm, label = "ζ (s⁻¹)")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "10_baroclinic_instability.mp4")
-record(fig, outfile, 1:length(frames); framerate = 8) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 8) do i
     n[] = i
     ax.title = @sprintf("Baroclinic eddies — t = %.0f days", frames[i][1]/86400)
 end

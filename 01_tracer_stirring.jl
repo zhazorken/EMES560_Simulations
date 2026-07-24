@@ -77,7 +77,7 @@ Colorbar(fig[1, 2], hm, label = "tracer c")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "01_tracer_stirring.mp4")
-record(fig, outfile, 1:length(frames); framerate = 20) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 20) do i
     n[] = i
     ax.title = @sprintf("Tracer stirring — t = %.1f", frames[i][1])
 end

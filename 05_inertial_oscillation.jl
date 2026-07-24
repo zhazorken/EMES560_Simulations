@@ -76,7 +76,7 @@ axA  = Axis(figA[1, 1], xlabel = "u (m/s)", ylabel = "v (m/s)", aspect = 1,
 lines!(axA, trace_u, trace_v, color = :teal)
 scatter!(axA, head_u, head_v, color = :orange, markersize = 14)
 outfile = joinpath(@__DIR__, "output", "05_inertial_oscillation.mp4")
-record(figA, outfile, 2:length(track); framerate = 25) do i
+CairoMakie.record(figA, outfile, 2:length(track); framerate = 25) do i
     n[] = i
 end
 @info "Saved $outfile"

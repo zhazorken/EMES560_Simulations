@@ -80,7 +80,7 @@ Colorbar(fig[1, 2], hm, label = "ζ")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "08_barotropic_instability_bickley.mp4")
-record(fig, outfile, 1:length(frames); framerate = 18) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 18) do i
     n[] = i
     ax.title = @sprintf("Barotropic instability — t = %.0f", frames[i][1])
 end

@@ -76,7 +76,7 @@ Colorbar(fig[1, 2], hm, label = "w (m/s)")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "03_rayleigh_benard.mp4")
-record(fig, outfile, 1:length(frames); framerate = 12) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 12) do i
     n[] = i
     ax.title = @sprintf("Free convection — t = %.0f min", frames[i][1] / 60)
 end

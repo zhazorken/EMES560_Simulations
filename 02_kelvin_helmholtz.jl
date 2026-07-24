@@ -79,7 +79,7 @@ Colorbar(fig[1, 2], hm, label = "buoyancy b")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "02_kelvin_helmholtz.mp4")
-record(fig, outfile, 1:length(frames); framerate = 15) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 15) do i
     n[] = i
     ax.title = @sprintf("Kelvin–Helmholtz (Ri = 0.1) — t = %.1f", frames[i][1])
 end

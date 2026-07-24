@@ -74,7 +74,7 @@ Colorbar(fig[1, 2], hm, label = "h − H")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "11_rossby_wave.mp4")
-record(fig, outfile, 1:length(frames); framerate = 20) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 20) do i
     n[] = i
     ax.title = @sprintf("Rossby wave (westward phase) — t = %.0f", frames[i][1])
 end

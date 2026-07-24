@@ -37,19 +37,19 @@ N² = N^2
 ω  = 0.61 * N                  # forcing frequency < N  →  cos θ = ω/N ≈ 0.61
 
 # background stratification b̄ = N² z (waves are perturbations about it)
-B̄(x, z, t) = N² * z
+B̄(x, z, t, p) = p.N² * z
 
 # a small, localized, oscillating vertical force at the origin
 A, σ = 1e-3, 0.2
-w_force(x, z, t) = A * exp(-(x^2 + z^2) / 2σ^2) * sin(ω * t)
+w_force(x, z, t, p) = p.A * exp(-(x^2 + z^2) / (2 * p.σ^2)) * sin(p.ω * t)
 
 model = NonhydrostaticModel(grid;
                             advection = WENO(),
                             timestepper = :RungeKutta3,
                             tracers = :b,
                             buoyancy = BuoyancyTracer(),
-                            background_fields = (; b = BackgroundField(B̄)),
-                            forcing = (; w = Forcing(w_force)),
+                            background_fields = (; b = BackgroundField(B̄, parameters = (; N²))),
+                            forcing = (; w = Forcing(w_force, parameters = (; A, σ, ω))),
                             closure = ScalarDiffusivity(ν = 1e-4, κ = 1e-4))
 
 simulation = Simulation(model, Δt = 0.02, stop_time = 40)
@@ -77,7 +77,7 @@ Colorbar(fig[1, 2], hm, label = "w")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "07_internal_wave.mp4")
-record(fig, outfile, 1:length(frames); framerate = 18) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 18) do i
     n[] = i
     ax.title = @sprintf("Internal-wave beams (ω = 0.61 N) — t = %.1f", frames[i][1])
 end

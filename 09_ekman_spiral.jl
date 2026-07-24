@@ -76,7 +76,7 @@ axA  = Axis(figA[1, 1], xlabel = "u (m/s)", ylabel = "v (m/s)", aspect = DataAsp
             title = "Ekman spiral")
 lines!(axA, uu, vv, color = zc, colormap = :viridis)
 outfile = joinpath(@__DIR__, "output", "09_ekman_spiral.mp4")
-record(figA, outfile, 1:length(frames); framerate = 20) do i
+CairoMakie.record(figA, outfile, 1:length(frames); framerate = 20) do i
     n[] = i
     axA.title = @sprintf("Ekman spiral — t = %.1f h", frames[i][1] / 3600)
 end

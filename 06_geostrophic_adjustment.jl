@@ -67,7 +67,7 @@ lines!(ax2, xc, vline, color = :teal)
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "06_geostrophic_adjustment.mp4")
-record(fig, outfile, 1:length(frames); framerate = 20) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 20) do i
     n[] = i
     ax1.title = @sprintf("Geostrophic adjustment — t = %.1f (units 1/f)", frames[i][1])
 end

@@ -72,7 +72,7 @@ Colorbar(fig[1, 2], hm, label = "vorticity ζ")
 
 mkpath(joinpath(@__DIR__, "output"))
 outfile = joinpath(@__DIR__, "output", "04_two_dimensional_turbulence.mp4")
-record(fig, outfile, 1:length(frames); framerate = 18) do i
+CairoMakie.record(fig, outfile, 1:length(frames); framerate = 18) do i
     n[] = i
     ax.title = @sprintf("2D turbulence (vortex merger) — t = %.1f", frames[i][1])
 end
